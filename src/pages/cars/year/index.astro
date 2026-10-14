@@ -1,0 +1,11 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import LinkList from "../../../components/LinkList.astro";
+import cars from "../../../assets/cars.json";
+
+const years = [...new Set(cars.map((c) => c.year))].sort((a, b) => a - b);
+---
+
+<Layout>
+  <LinkList title="Années" basePath="/cars/year" items={years} />
+</Layout>

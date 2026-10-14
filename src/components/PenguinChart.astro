@@ -1,0 +1,58 @@
+---
+import PlotFigure from "./PlotFigure.astro";
+import * as Plot from "@observablehq/plot";
+
+const { data, title = "Longueur et profondeur du bec" } = Astro.props;
+
+const speciesColors = {
+  Adelie: "#4C78A8",
+  Chinstrap: "#F58518",
+  Gentoo: "#54A24B",
+};
+
+const validPenguins = data.filter(
+  (p) => p.culmen_length_mm != null && p.culmen_depth_mm != null
+);
+---
+
+<section class="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+  <div class="p-6 sm:p-8">
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold text-slate-900">{title}</h2>
+      <p class="mt-1 text-sm text-slate-500">
+        {validPenguins.length} pingouin(s) avec des mesures valides.
+      </p>
+    </div>
+
+    <div class="overflow-x-auto rounded-2xl bg-slate-50 p-3">
+      <PlotFigure
+        options={{
+          width: 900,
+          height: 500,
+          marginLeft: 70,
+          marginBottom: 60,
+          style: { background: "transparent", color: "#64748b" },
+          color: {
+            domain: ["Adelie", "Chinstrap", "Gentoo"],
+            range: [
+              speciesColors.Adelie,
+              speciesColors.Chinstrap,
+              speciesColors.Gentoo,
+            ],
+          },
+          x: { label: "Longueur du bec (mm)" },
+          y: { label: "Profondeur du bec (mm)", grid: true },
+          marks: [
+            Plot.dot(validPenguins, {
+              x: "culmen_length_mm",
+              y: "culmen_depth_mm",
+              stroke: "species",
+              r: 5,
+              tip: true,
+            }),
+          ],
+        }}
+      />
+    </div>
+  </div>
+</section>

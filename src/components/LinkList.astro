@@ -1,0 +1,40 @@
+---
+// Liste de liens générée automatiquement à partir d'un tableau de valeurs
+const { title, basePath, items } = Astro.props;
+---
+
+<main class="min-h-screen bg-[#f4f7fb] px-4 py-10 text-slate-900 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-6xl">
+    <header class="mb-10">
+      <div class="mb-4 flex items-center gap-3">
+        <span class="h-2.5 w-2.5 rounded-full bg-cyan-500"></span>
+        <span class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+          Data visualization
+        </span>
+      </div>
+
+      <h1 class="text-5xl font-black tracking-tight text-slate-900 sm:text-6xl">
+        {title}<span class="text-cyan-500">.</span>
+      </h1>
+
+      <a href="/" class="mt-4 inline-block font-semibold text-cyan-500 hover:underline">
+        Retourner à l'accueil →
+      </a>
+    </header>
+
+    <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        items.map((item) => (
+          <li>
+            <a
+              href={`${basePath}/${item}`}
+              class="block rounded-2xl bg-white p-4 font-bold text-slate-900 shadow-sm ring-1 ring-slate-200 transition hover:ring-cyan-400"
+            >
+              {item}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</main>

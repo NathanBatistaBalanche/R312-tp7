@@ -25,6 +25,20 @@ const validPenguins = filteredPenguins.filter(
     p.culmen_length_mm != null &&
     p.culmen_depth_mm != null
 );
+
+const essais = [
+  { href: "/essais/simple", numero: "01", titre: "Simple", description: "Histogramme aléatoire" },
+  { href: "/essais/penguin-simple", numero: "02", titre: "Simple Penguin", description: "Longueur et profondeur du bec" },
+  { href: "/essais/penguin-filtre", numero: "03", titre: "Penguin avec filtre", description: "Filtre sur l'espèce" },
+  { href: "/essais/penguin-filtres", numero: "04", titre: "Plusieurs filtres", description: "Espèce, île et sexe" },
+];
+
+const pagesPenguins = [
+  { href: "/penguins", titre: "Onglets", description: "Un onglet par espèce" },
+  { href: "/penguins/specie", titre: "Par espèce", description: "Adelie, Chinstrap, Gentoo" },
+  { href: "/penguins/island", titre: "Par île", description: "Biscoe, Dream, Torgersen" },
+  { href: "/penguins/sex", titre: "Par sexe", description: "Mâles et femelles" },
+];
 ---
 
 <Layout>
@@ -48,6 +62,37 @@ const validPenguins = filteredPenguins.filter(
           Explorez les caractéristiques physiques de différentes espèces
           de pingouins à travers plusieurs visualisations.
         </p>
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {essais.map((essai) => (
+            <a
+              href={essai.href}
+              class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 transition hover:ring-cyan-400"
+            >
+              <span class="text-xs font-bold uppercase tracking-widest text-cyan-500">
+                Essai {essai.numero}
+              </span>
+              <p class="mt-1 font-bold text-slate-900">{essai.titre}</p>
+              <p class="mt-1 text-sm text-slate-500">{essai.description}</p>
+            </a>
+          ))}
+        </div>
+        <div class="mt-8">
+          <p class="mb-3 text-xs font-bold uppercase tracking-widest text-slate-400">
+            Routes dynamiques
+          </p>
+
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {pagesPenguins.map((page) => (
+              <a
+                href={page.href}
+                class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 transition hover:ring-cyan-400"
+              >
+                <p class="font-bold text-slate-900">{page.titre}</p>
+                <p class="mt-1 text-sm text-slate-500">{page.description}</p>
+              </a>
+            ))}
+          </div>
+        </div>
       </header>
 
       <div class="mb-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">

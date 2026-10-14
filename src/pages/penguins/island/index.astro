@@ -1,0 +1,11 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import LinkList from "../../../components/LinkList.astro";
+import penguins from "../../../assets/penguins.json";
+
+const islands = [...new Set(penguins.map((p) => p.island))];
+---
+
+<Layout>
+  <LinkList title="Îles" basePath="/penguins/island" items={islands} />
+</Layout>

@@ -1,0 +1,107 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PlotFigure from "../../components/PlotFigure.astro";
+import * as Plot from "@observablehq/plot";
+import cars from "../../assets/cars.json";
+
+// Liste des années déterminée automatiquement
+const years = [...new Set(cars.map((c) => c.year))].sort((a, b) => a - b);
+---
+
+<Layout>
+  <main class="min-h-screen bg-[#f4f7fb] px-4 py-10 text-slate-900 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-6xl">
+      <header class="mb-10">
+        <h1 class="text-5xl font-black tracking-tight text-slate-900 sm:text-6xl">
+          Toutes les années<span class="text-cyan-500">.</span>
+        </h1>
+        <p class="mt-4 text-slate-500">Un onglet par année, généré avec map().</p>
+        <a href="/cars/year" class="mt-4 inline-block font-semibold text-cyan-500 hover:underline">
+          Voir une page par année →
+        </a>
+      </header>
+
+      <nav class="mb-4 flex overflow-x-auto rounded-xl bg-white p-1 shadow-sm ring-1 ring-slate-200">
+        {
+          years.map((y, i) => (
+            <button
+              type="button"
+              data-tab={y}
+              class={`tab rounded-lg px-4 py-2.5 text-sm font-semibold transition ${
+                i === 0 ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-100"
+              }`}
+            >
+              {y}
+            </button>
+          ))
+        }
+      </nav>
+
+      {
+        years.map((y, i) => {
+          const filtered = cars.filter((c) => c.year === y);
+
+          return (
+            <div data-panel={y} style={i === 0 ? "display:block" : "display:none"}>
+              <section class="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+                <div class="p-6 sm:p-8">
+                  <h2 class="text-2xl font-bold text-slate-900">Voitures de l'année {y}</h2>
+                  <p class="mt-1 mb-6 text-sm text-slate-500">
+                    {filtered.length} voiture(s) trouvée(s).
+                  </p>
+
+                  <div class="overflow-x-auto rounded-2xl bg-slate-50 p-3">
+                    <PlotFigure
+                      options={{
+                        width: 900,
+                        height: 500,
+                        marginLeft: 70,
+                        marginBottom: 60,
+                        grid: true,
+                        style: { background: "transparent", color: "#64748b" },
+                        x: { label: "Poids (lb)" },
+                        y: { label: "Puissance (hp)" },
+                        marks: [
+                          Plot.dot(filtered, {
+                            x: "weight (lb)",
+                            y: "power (hp)",
+                            fill: "steelblue",
+                            r: 4,
+                            fillOpacity: 0.7,
+                            tip: true,
+                          }),
+                        ],
+                      }}
+                    />
+                  </div>
+                </div>
+              </section>
+            </div>
+          );
+        })
+      }
+    </div>
+  </main>
+</Layout>
+
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>("[data-tab]");
+  const panels = document.querySelectorAll<HTMLElement>("[data-panel]");
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const selected = tab.dataset.tab;
+
+      panels.forEach((panel) => {
+        panel.style.display = panel.dataset.panel === selected ? "block" : "none";
+      });
+
+      tabs.forEach((t) => {
+        const active = t === tab;
+        t.classList.toggle("bg-slate-900", active);
+        t.classList.toggle("text-white", active);
+        t.classList.toggle("text-slate-500", !active);
+      });
+    });
+  });
+</script>

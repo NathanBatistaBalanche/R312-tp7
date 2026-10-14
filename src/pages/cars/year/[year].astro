@@ -1,0 +1,47 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import PlotFigure from "../../../components/PlotFigure.astro";
+import * as Plot from "@observablehq/plot";
+import cars from "../../../assets/cars.json";
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  const years = [...new Set(cars.map((c) => c.year))];
+  return years.map((year) => ({ params: { year: String(year) } }));
+}
+
+const { year } = Astro.params;
+const filteredCars = cars.filter((car) => car.year.toString() === year);
+
+const plotOptions = {
+  grid: true,
+  marks: [
+    Plot.dot(filteredCars, {
+      x: "weight (lb)",
+      y: "power (hp)",
+      fill: "steelblue",
+      r: 4,
+      fillOpacity: 0.7,
+    }),
+  ],
+  x: { label: "Poids (lb)" },
+  y: { label: "Puissance (hp)" },
+  title: `Relation Puissance vs Poids - Voitures ${year}`,
+};
+---
+
+<Layout>
+  <main class="min-h-screen bg-[#f4f7fb] px-4 py-10 text-slate-900 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-6xl">
+      <h1 class="text-4xl font-black">Voitures de l'année {year}</h1>
+      <p class="mt-2 text-slate-500">{filteredCars.length} voiture(s) trouvée(s).</p>
+      <a href="/cars/year" class="mt-4 inline-block font-semibold text-cyan-500 hover:underline">
+        ← Toutes les années
+      </a>
+      <div class="mt-6 overflow-x-auto rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+        <PlotFigure options={plotOptions} />
+      </div>
+    </div>
+  </main>
+</Layout>

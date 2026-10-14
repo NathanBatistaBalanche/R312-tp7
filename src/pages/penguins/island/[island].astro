@@ -1,0 +1,34 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import PenguinChart from "../../../components/PenguinChart.astro";
+import penguins from "../../../assets/penguins.json";
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  const islands = [...new Set(penguins.map((p) => p.island))];
+  return islands.map((island) => ({ params: { island } }));
+}
+
+const { island } = Astro.params;
+const filtered = penguins.filter((p) => p.island === island);
+---
+
+<Layout>
+  <main class="min-h-screen bg-[#f4f7fb] px-4 py-10 text-slate-900 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-6xl">
+      <header class="mb-10">
+        <h1 class="text-5xl font-black tracking-tight text-slate-900 sm:text-6xl">
+          {island}<span class="text-cyan-500">.</span>
+        </h1>
+        <p class="mt-4 text-slate-500">{filtered.length} pingouin(s) sur l'île {island}.</p>
+        <a href="/penguins/island" class="mt-4 inline-block font-semibold text-cyan-500 hover:underline">
+          ← Toutes les îles
+        </a>
+        <a href="/" class="mt-4 ml-20 inline-block font-semibold text-cyan-500 hover:underline">Retourner à l'accueil →</a>
+      </header>
+
+      <PenguinChart data={filtered} title={`Bec – île ${island}`} />
+    </div>
+  </main>
+</Layout>

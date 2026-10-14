@@ -1,0 +1,73 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PenguinChart from "../../components/PenguinChart.astro";
+import penguins from "../../assets/penguins.json";
+
+// Liste des espèces déterminée automatiquement
+const species = [...new Set(penguins.map((p) => p.species))];
+---
+
+<Layout>
+  <main class="min-h-screen bg-[#f4f7fb] px-4 py-10 text-slate-900 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-6xl">
+      <header class="mb-10">
+        <h1 class="text-5xl font-black tracking-tight text-slate-900 sm:text-6xl">
+          Toutes les espèces<span class="text-cyan-500">.</span>
+        </h1>
+        <p class="mt-4 text-slate-500">Un onglet par espèce, généré avec map().</p>
+        <a href="/" class="mt-4 inline-block font-semibold text-cyan-500 hover:underline">
+          Retourner à l'accueil →
+        </a>
+      </header>
+
+      <nav class="mb-4 flex overflow-x-auto rounded-xl bg-white p-1 shadow-sm ring-1 ring-slate-200">
+        {
+          species.map((s, i) => (
+            <button
+              type="button"
+              data-tab={s}
+              class={`tab rounded-lg px-4 py-2.5 text-sm font-semibold transition ${
+                i === 0 ? "bg-slate-900 text-white" : "text-slate-500 hover:bg-slate-100"
+              }`}
+            >
+              {s}
+            </button>
+          ))
+        }
+      </nav>
+
+      {
+        species.map((s, i) => (
+          <div data-panel={s} style={i === 0 ? "display:block" : "display:none"}>
+            <PenguinChart
+              data={penguins.filter((p) => p.species === s)}
+              title={`Bec des ${s}`}
+            />
+          </div>
+        ))
+      }
+    </div>
+  </main>
+</Layout>
+
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>("[data-tab]");
+  const panels = document.querySelectorAll<HTMLElement>("[data-panel]");
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const selected = tab.dataset.tab;
+
+      panels.forEach((panel) => {
+        panel.style.display = panel.dataset.panel === selected ? "block" : "none";
+      });
+
+      tabs.forEach((t) => {
+        const active = t === tab;
+        t.classList.toggle("bg-slate-900", active);
+        t.classList.toggle("text-white", active);
+        t.classList.toggle("text-slate-500", !active);
+      });
+    });
+  });
+</script>

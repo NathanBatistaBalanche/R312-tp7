@@ -1,0 +1,12 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import LinkList from "../../../components/LinkList.astro";
+import penguins from "../../../assets/penguins.json";
+
+// On ignore les valeurs null (sexe inconnu)
+const sexes = [...new Set(penguins.map((p) => p.sex))].filter((s) => s != null);
+---
+
+<Layout>
+  <LinkList title="Sexes" basePath="/penguins/sex" items={sexes} />
+</Layout>

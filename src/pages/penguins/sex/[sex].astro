@@ -1,0 +1,35 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import PenguinChart from "../../../components/PenguinChart.astro";
+import penguins from "../../../assets/penguins.json";
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  // On ignore les valeurs null (sexe inconnu)
+  const sexes = [...new Set(penguins.map((p) => p.sex))].filter((s) => s != null);
+  return sexes.map((sex) => ({ params: { sex } }));
+}
+
+const { sex } = Astro.params;
+const filtered = penguins.filter((p) => p.sex === sex);
+---
+
+<Layout>
+  <main class="min-h-screen bg-[#f4f7fb] px-4 py-10 text-slate-900 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-6xl">
+      <header class="mb-10">
+        <h1 class="text-5xl font-black tracking-tight text-slate-900 sm:text-6xl">
+          {sex}<span class="text-cyan-500">.</span>
+        </h1>
+        <p class="mt-4 text-slate-500">{filtered.length} pingouin(s) ({sex}).</p>
+        <a href="/penguins/sex" class="mt-4 inline-block font-semibold text-cyan-500 hover:underline">
+          ← Tous les sexes
+        </a>
+        <a href="/" class="mt-4 ml-20 inline-block font-semibold text-cyan-500 hover:underline">Retourner à l'accueil →</a>
+      </header>
+
+      <PenguinChart data={filtered} title={`Bec – ${sex}`} />
+    </div>
+  </main>
+</Layout>
