@@ -1,0 +1,186 @@
+---
+import PlotFigure from "../components/PlotFigure.astro";
+import Layout from "../layouts/Layout.astro";
+import * as Plot from "@observablehq/plot";
+import penguins from "../assets/penguins.json";
+
+const species = ["Toutes", "Adelie", "Chinstrap", "Gentoo"];
+
+const speciesColors = {
+  Adelie: "#4C78A8",
+  Chinstrap: "#F58518",
+  Gentoo: "#54A24B",
+};
+
+const selectedSpecies =
+  Astro.url.searchParams.get("species") || "Toutes";
+
+const filteredPenguins =
+  selectedSpecies === "Toutes"
+    ? penguins
+    : penguins.filter((p) => p.species === selectedSpecies);
+
+const validPenguins = filteredPenguins.filter(
+  (p) =>
+    p.culmen_length_mm != null &&
+    p.culmen_depth_mm != null
+);
+---
+
+<Layout>
+  <main class="min-h-screen bg-[#f4f7fb] px-4 py-10 text-slate-900 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-6xl">
+
+      <header class="mb-10">
+        <div class="mb-4 flex items-center gap-3">
+          <span class="h-2.5 w-2.5 rounded-full bg-cyan-500"></span>
+
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+            Data visualization
+          </span>
+        </div>
+
+        <h1 class="text-5xl font-black tracking-tight text-slate-900 sm:text-6xl">
+          Penguins<span class="text-cyan-500">.</span>
+        </h1>
+
+        <p class="mt-4 max-w-xl text-base leading-7 text-slate-500">
+          Explorez les caractéristiques physiques de différentes espèces
+          de pingouins à travers plusieurs visualisations.
+        </p>
+      </header>
+
+      <div class="mb-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <form
+          method="get"
+          class="flex w-fit items-center gap-3 rounded-xl bg-white px-4 py-2 shadow-sm ring-1 ring-slate-200"
+        >
+          <label
+            for="species-filter"
+            class="text-sm font-semibold text-slate-700"
+          >
+            Espèce
+          </label>
+
+          <select
+            id="species-filter"
+            name="species"
+            class="rounded-lg border-0 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 outline-none transition focus:ring-2 focus:ring-cyan-400"
+            onchange="this.form.submit()"
+          >
+            {species.map((item) => (
+              <option value={item} selected={item === selectedSpecies}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </form>
+
+        <span class="text-xs font-medium text-slate-400">
+          02 — 04
+        </span>
+      </div>
+
+      <nav class="mb-4 flex overflow-x-auto rounded-xl bg-white p-1 shadow-sm ring-1 ring-slate-200">
+        <a
+          href="/"
+          class="rounded-lg px-4 py-2.5 text-sm font-semibold text-slate-500 transition hover:bg-slate-100"
+        >
+          Espèces
+        </a>
+
+        <a
+          href="/bec"
+          class="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white"
+        >
+          Bec
+        </a>
+
+        <a
+          href="/distribution"
+          class="rounded-lg px-4 py-2.5 text-sm font-semibold text-slate-500 transition hover:bg-slate-100"
+        >
+          Distribution
+        </a>
+
+        <a
+          href="/comparaison"
+          class="rounded-lg px-4 py-2.5 text-sm font-semibold text-slate-500 transition hover:bg-slate-100"
+        >
+          Comparaison
+        </a>
+      </nav>
+
+      <section class="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+        <div class="p-6 sm:p-8">
+
+          <div class="mb-6">
+            <span class="text-xs font-bold uppercase tracking-widest text-cyan-500">
+              Analyse 02
+            </span>
+
+            <h2 class="mt-2 text-2xl font-bold text-slate-900">
+              Longueur et profondeur du bec
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+              Relation entre les dimensions du bec selon l'espèce.
+            </p>
+          </div>
+
+          <div class="overflow-x-auto rounded-2xl bg-slate-50 p-3">
+            <PlotFigure
+              options={{
+                width: 900,
+                height: 500,
+                marginLeft: 70,
+                marginBottom: 60,
+
+                style: {
+                  background: "transparent",
+                  color: "#64748b",
+                },
+
+                color: {
+                  domain: ["Adelie", "Chinstrap", "Gentoo"],
+                  range: [
+                    speciesColors.Adelie,
+                    speciesColors.Chinstrap,
+                    speciesColors.Gentoo,
+                  ],
+                },
+
+                x: {
+                  label: "Longueur du bec (mm)",
+                },
+
+                y: {
+                  label: "Profondeur du bec (mm)",
+                  grid: true,
+                },
+
+                marks: [
+                  Plot.dot(validPenguins, {
+                    x: "culmen_length_mm",
+                    y: "culmen_depth_mm",
+                    stroke: "species",
+                    r: 5,
+                    tip: true,
+                  }),
+                ],
+              }}
+            />
+          </div>
+
+        </div>
+
+        <div class="border-t border-slate-100 px-6 py-4 sm:px-8">
+          <p class="text-xs text-slate-400">
+            Visualisation réalisée avec Astro & Observable Plot
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</Layout>

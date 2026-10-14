@@ -1,0 +1,315 @@
+---
+import PlotFigure from "../components/PlotFigure.astro";
+import Layout from "../layouts/Layout.astro";
+import * as Plot from "@observablehq/plot";
+import penguins from "../assets/penguins.json";
+
+const speciesColors = {
+  Adelie: "#4C78A8",
+  Chinstrap: "#F58518",
+  Gentoo: "#54A24B",
+};
+
+const validPenguins = penguins.filter(
+  (p) =>
+    p.species != null &&
+    p.island != null &&
+    p.flipper_length_mm != null &&
+    p.body_mass_g != null &&
+    p.sex != null
+);
+---
+
+<Layout>
+  <main class="min-h-screen bg-[#f4f7fb] px-4 py-10 text-slate-900 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-6xl">
+
+      <header class="mb-10">
+        <div class="mb-4 flex items-center gap-3">
+          <span class="h-2.5 w-2.5 rounded-full bg-cyan-500"></span>
+
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+            Data visualization
+          </span>
+        </div>
+
+        <h1 class="text-5xl font-black tracking-tight text-slate-900 sm:text-6xl">
+          Penguins<span class="text-cyan-500">.</span>
+        </h1>
+
+        <p class="mt-4 max-w-xl text-base leading-7 text-slate-500">
+          Découvrez trois nouvelles visualisations à travers les différentes
+          caractéristiques des pingouins.
+        </p>
+      </header>
+
+      <nav class="sticky top-4 z-10 mb-6 rounded-2xl bg-white p-2 shadow-sm ring-1 ring-slate-200">
+        <div class="flex gap-2 overflow-x-auto">
+
+          <a
+            href="#graphique-1"
+            class="whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+          >
+            Masse par île
+          </a>
+
+          <a
+            href="#graphique-2"
+            class="whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+          >
+            Nageoires
+          </a>
+
+          <a
+            href="#graphique-3"
+            class="whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+          >
+            Sexe
+          </a>
+
+        </div>
+      </nav>
+
+      <section class="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+
+        <div
+          id="slider"
+          class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth"
+          style="scrollbar-width: thin;"
+        >
+
+          <article
+            id="graphique-1"
+            class="min-w-full shrink-0 snap-start p-6 sm:p-8"
+          >
+            <div class="mb-6">
+              <span class="text-xs font-bold uppercase tracking-widest text-cyan-500">
+                Analyse 05
+              </span>
+
+              <h2 class="mt-2 text-2xl font-bold text-slate-900">
+                Masse moyenne selon l'île
+              </h2>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Comparaison de la masse moyenne des pingouins sur les trois îles.
+              </p>
+            </div>
+
+            <div class="overflow-x-auto rounded-2xl bg-slate-50 p-3">
+              <PlotFigure
+                options={{
+                  width: 900,
+                  height: 500,
+                  marginLeft: 70,
+                  marginBottom: 60,
+
+                  style: {
+                    background: "transparent",
+                    color: "#64748b",
+                  },
+
+                  x: {
+                    label: "Île",
+                  },
+
+                  y: {
+                    label: "Masse moyenne (g)",
+                    grid: true,
+                  },
+
+                  color: {
+                    domain: ["Adelie", "Chinstrap", "Gentoo"],
+                    range: [
+                      speciesColors.Adelie,
+                      speciesColors.Chinstrap,
+                      speciesColors.Gentoo,
+                    ],
+                  },
+
+                  marks: [
+                    Plot.barY(
+                      validPenguins,
+                      Plot.groupX(
+                        {
+                          y: "mean",
+                        },
+                        {
+                          x: "island",
+                          y: "body_mass_g",
+                          fill: "species",
+                          tip: true,
+                        }
+                      )
+                    ),
+                  ],
+                }}
+              />
+            </div>
+          </article>
+
+          <article
+            id="graphique-2"
+            class="min-w-full shrink-0 snap-start p-6 sm:p-8"
+          >
+            <div class="mb-6">
+              <span class="text-xs font-bold uppercase tracking-widest text-cyan-500">
+                Analyse 06
+              </span>
+
+              <h2 class="mt-2 text-2xl font-bold text-slate-900">
+                Longueur moyenne des nageoires
+              </h2>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Comparaison de la longueur moyenne des nageoires selon l'espèce.
+              </p>
+            </div>
+
+            <div class="overflow-x-auto rounded-2xl bg-slate-50 p-3">
+              <PlotFigure
+                options={{
+                  width: 900,
+                  height: 500,
+                  marginLeft: 70,
+                  marginBottom: 60,
+
+                  style: {
+                    background: "transparent",
+                    color: "#64748b",
+                  },
+
+                  x: {
+                    label: "Espèce",
+                  },
+
+                  y: {
+                    label: "Longueur moyenne de la nageoire (mm)",
+                    grid: true,
+                  },
+
+                  color: {
+                    domain: ["Adelie", "Chinstrap", "Gentoo"],
+                    range: [
+                      speciesColors.Adelie,
+                      speciesColors.Chinstrap,
+                      speciesColors.Gentoo,
+                    ],
+                  },
+
+                  marks: [
+                    Plot.barY(
+                      validPenguins,
+                      Plot.groupX(
+                        {
+                          y: "mean",
+                        },
+                        {
+                          x: "species",
+                          y: "flipper_length_mm",
+                          fill: "species",
+                          tip: true,
+                        }
+                      )
+                    ),
+                  ],
+                }}
+              />
+            </div>
+          </article>
+
+          <article
+            id="graphique-3"
+            class="min-w-full shrink-0 snap-start p-6 sm:p-8"
+          >
+            <div class="mb-6">
+              <span class="text-xs font-bold uppercase tracking-widest text-cyan-500">
+                Analyse 07
+              </span>
+
+              <h2 class="mt-2 text-2xl font-bold text-slate-900">
+                Répartition des sexes
+              </h2>
+
+              <p class="mt-1 text-sm text-slate-500">
+                Nombre de mâles et de femelles pour chaque espèce.
+              </p>
+            </div>
+
+            <div class="overflow-x-auto rounded-2xl bg-slate-50 p-3">
+              <PlotFigure
+                options={{
+                  width: 900,
+                  height: 500,
+                  marginLeft: 70,
+                  marginBottom: 60,
+
+                  style: {
+                    background: "transparent",
+                    color: "#64748b",
+                  },
+
+                  x: {
+                    label: "Espèce",
+                  },
+
+                  y: {
+                    label: "Nombre de pingouins",
+                    grid: true,
+                  },
+
+                  color: {
+                    domain: ["MALE", "FEMALE"],
+                    range: ["#4C78A8", "#F58518"],
+                  },
+
+                  marks: [
+                    Plot.barY(
+                      validPenguins,
+                      Plot.groupX(
+                        {
+                          y: "count",
+                        },
+                        {
+                          x: "species",
+                          fill: "sex",
+                          tip: true,
+                        }
+                      )
+                    ),
+                  ],
+                }}
+              />
+            </div>
+          </article>
+
+        </div>
+
+        <div class="border-t border-slate-100 px-6 py-4 sm:px-8">
+          <p class="text-xs text-slate-400">
+            Faites défiler horizontalement pour découvrir les différentes analyses.
+          </p>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+</Layout>
+
+<style>
+  html {
+    scroll-behavior: smooth;
+  }
+
+  #slider {
+    scroll-snap-type: x mandatory;
+  }
+
+  #slider article {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+</style>
+
+<!-- Rappel : dis à chat de les faire plus gros stp pour que le défilement horizontal fonctionne stp -->
